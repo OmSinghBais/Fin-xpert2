@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import Topbar from './Topbar'
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -9,7 +10,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
   return (
     <section>
-      {children}
+      <Topbar email={session.user.email} />
+      <div>
+        {children}
+      </div>
     </section>
   )
 }
