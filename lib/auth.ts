@@ -11,6 +11,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     GithubProvider({
       clientId: process.env.GITHUB_ID || '',
       clientSecret: process.env.GITHUB_SECRET || '',
+      authorization: {
+        params: {
+          redirect_uri: process.env.AUTH_URL 
+            ? `${process.env.AUTH_URL}/api/auth/callback/github`
+            : undefined,
+        },
+      },
     }),
   ],
   pages: {
