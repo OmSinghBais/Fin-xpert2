@@ -22,16 +22,9 @@ export default function LoginPage() {
     setLoading(true)
     setError("")
 
-    // Simulate login
-    setTimeout(() => {
-      if (!email || !password) {
-        setError("Please fill in all fields")
-      } else {
-        // Redirect to dashboard on successful login
-        window.location.href = "/dashboard"
-      }
-      setLoading(false)
-    }, 500)
+    // For now, just show that you need to use GitHub OAuth
+    setError("Please use GitHub OAuth to sign in")
+    setLoading(false)
   }
 
   return (

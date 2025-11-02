@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Users, BarChart3, MessageSquare, Target, Settings, LogOut, Menu, X, Zap, TrendingUp } from "lucide-react"
+import { signOut } from "next-auth/react"
 
 const menuItems = [
   { icon: Users, label: "Clients", href: "/dashboard" },
@@ -74,11 +75,13 @@ export function Sidebar() {
             <Settings size={20} />
             <span className="text-sm font-medium">Settings</span>
           </Link>
-          <Button variant="outline" className="w-full justify-start gap-3 bg-transparent" asChild>
-            <Link href="/">
-              <LogOut size={20} />
-              Logout
-            </Link>
+          <Button 
+            variant="outline" 
+            className="w-full justify-start gap-3 bg-transparent" 
+            onClick={() => signOut({ callbackUrl: '/' })}
+          >
+            <LogOut size={20} />
+            Logout
           </Button>
         </div>
       </aside>
