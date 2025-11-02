@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  createdAt DateTime @default(now())
+}
+
+// Phase 1 CRM models
+model Organization {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  users     User[]
+  clients   Client[]
+  campaigns Campaign[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  role      String   @default("member")
+  orgId     Int
+  org       Organization @relation(fields: [orgId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  id          Int      @id @default(autoincrement())
+  orgId       Int
+  org         Organization @relation(fields: [orgId], references: [id])
+  name        String
+  email       String?
+  phone       String?
+  riskProfile String? // e.g., conservative, moderate, aggressive
+  kycStatus   String? // e.g., pending, verified
+  createdAt   DateTime @default(now())
+  interactions Interaction[]
+  notes        Note[]
+  tasks        Task[]
+  messages     Message[]
+}
+
+model Interaction {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id])
+  type      String   // call, meeting, email, whatsapp, sms
+  channel   String?  // optional further channel detail
+  summary   String
+  occurredAt DateTime @default(now())
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id])
+  title     String
+  status    String   @default("open") // open, done
+  dueAt     DateTime?
+  createdAt DateTime @default(now())
+}
+
+// Phase 2: Campaigns
+enum Channel {
+  whatsapp
+  sms
+  email
+}
+
+model Campaign {
+  id          Int       @id @default(autoincrement())
+  orgId       Int
+  org         Organization @relation(fields: [orgId], references: [id])
+  name        String
+  channel     Channel
+  template    String   // message template text
+  scheduledAt DateTime?
+  status      String   @default("draft") // draft, scheduled, sent
+  createdAt   DateTime @default(now())
+  messages    Message[]
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  campaignId  Int
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  clientId    Int
+  client      Client   @relation(fields: [clientId], references: [id])
+  status      String   @default("pending") // pending, sent, failed
+  error       String?
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+  attempts    Int      @default(0)
+  lastAttemptAt DateTime?
+  nextAttemptAt DateTime?
+}
