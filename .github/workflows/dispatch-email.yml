@@ -2,8 +2,8 @@ name: Dispatch Email Campaigns
 
 on:
   workflow_dispatch: {}
-  schedule:
-    - cron: "*/5 * * * *"
+  # schedule:
+  #   - cron: "*/5 * * * *"  # Disabled - uncomment to enable automated runs
 
 jobs:
   dispatch:
